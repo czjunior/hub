@@ -39,6 +39,7 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middleware('auth');
 	
 	Route::get('cidade-create', [CidadeController::class, 'create'])->middleware('auth')->name('cidade-create');
+	Route::post('cidade-store', [CidadeController::class, 'store'])->middleware('auth')->name('cidade-store');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
