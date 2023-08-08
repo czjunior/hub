@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cidade;
+use App\Models\Ordenador;
 use App\Models\Orgao;
+use App\Models\UnidadeGestora;
+use App\Models\UnidadeOrcamentaria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class OrgaoController extends Controller
 {
@@ -44,9 +49,21 @@ class OrgaoController extends Controller
      * @param  \App\Models\Orgao  $orgao
      * @return \Illuminate\Http\Response
      */
-    public function show(Orgao $orgao)
+    public function show(String $id)
     {
         //
+        dd($id);
+        $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
+        $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
+        $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);
+        $unidadeGestora = UnidadeGestora::all()->where('codigo_municipio', '=', $id);
+        $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where('codigo_municipio', '=', $id);
+        return view('cidades.index', ['municipios' => $municipios,
+                                      'orgao' => $orgao,
+                                      'ordenador' => $ordenador,
+                                      'unidadeGestora' => $unidadeGestora,
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                    ]);
     }
 
     /**

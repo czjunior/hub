@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('codigo_vinculo');
             $table->string('numero_expediente_nomeacao');
             $table->date('data_inicio_gestao_ordenador');
-            $table->date('data_fim_gestao_ordenador');
+            $table->date('data_fim_gestao_ordenador')->nullable();
             $table->string('tipo_cargo');
             $table->timestamps();
         });

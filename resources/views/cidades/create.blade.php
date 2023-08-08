@@ -4,6 +4,7 @@
     @include('layouts.navbars.auth.topnav', ['title' => 'Cidade'])
     <div class="container-fluid py-4">
         <div class="row">
+            
             <div class="col-md-12">
                 <div class="card">
                 <form role="form" method="POST" action="{{ route('cidade-store') }}">

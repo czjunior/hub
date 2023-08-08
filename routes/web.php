@@ -22,6 +22,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CidadeController;
+use App\Http\Controllers\OrgaoController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;            
@@ -39,7 +40,10 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middleware('auth');
 	
 	Route::get('cidade-create', [CidadeController::class, 'create'])->middleware('auth')->name('cidade-create');
+	Route::get('cidade-index', [CidadeController::class, 'index'])->middleware('auth')->name('cidade-index');
 	Route::post('cidade-store', [CidadeController::class, 'store'])->middleware('auth')->name('cidade-store');
+
+	Route::get('orgao-show', [OrgaoController::class, 'show'])->middleware('auth')->name('orgao-show');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');

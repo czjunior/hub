@@ -20,6 +20,17 @@ class CidadeController extends Controller
     public function index()
     {
         //
+        $municipios = Cidade::all();
+        $orgao = Orgao::all();
+        $ordenador = Ordenador::all();
+        $unidadeGestora = UnidadeGestora::all();
+        $unidadeOrcamentaria = UnidadeOrcamentaria::all();
+        return view('cidades.index', ['municipios' => $municipios,
+                                      'orgao' => $orgao,
+                                      'ordenador' => $ordenador,
+                                      'unidadeGestora' => $unidadeGestora,
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                    ]);
     }
 
     /**
@@ -34,7 +45,7 @@ class CidadeController extends Controller
         $api_array = $api['data'];
         ///////////////////////////////////////////////////////////////////////
         //dd($api_array);
-        return view('cidades.create', ['flag' => 0, 'municipios' => $api_array]);
+        return view('cidades.create', ['flag' => 0, 'municipios' => $api_array, 'msg' => '']);
     }
 
     /**
@@ -54,7 +65,7 @@ class CidadeController extends Controller
         ////////////////////////////ORDENADOR//////////////////////////////////
         $api2 = Http::get('https://api-dados-abertos.tce.ce.gov.br/ordenadores?codigo_municipio='.$mun[0].'&exercicio_orcamento='.date('Y').'00');
         $api2_array = $api2['data'];
-        dd($api2_array);
+        //dd($api2_array);
         /////////////////////////////ORGÃO/////////////////////////////////////
         $api3 = Http::get('https://api-dados-abertos.tce.ce.gov.br/orgaos?codigo_municipio='.$mun[0].'&exercicio_orcamento='.date('Y').'00');
         $api3_array = $api3['data'];
@@ -74,7 +85,10 @@ class CidadeController extends Controller
         //dd($conferencia);
         if($conferencia > 0){
             $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $mun[0]);
-            return redirect()->route('cidades.create', ['flag' => 0, 'municipios' => $api_array]);
+            return redirect()->route('cidades.create', ['flag' => 0, 
+                                                        'municipios' => $api_array, 
+                                                        'msg' => 'Importação realizada anteriormente'
+                                                    ]);
         }
         else{
             $municipio = new Cidade;
@@ -85,6 +99,18 @@ class CidadeController extends Controller
             $municipio->save();
 
             for($u=0;$u<count($api2_array);$u++){
+                $n_dt1 = explode("T", $api2_array[$u]['data_inclusao_unidade_orcamentaria']);
+                $data_inclusao_unidade_orcamentaria = $n_dt1[0]." ".substr($n_dt1[1], 0, 8);
+
+                $n_dt2 = explode("T", $api2_array[$u]['data_inicio_gestao_ordenador']);
+                $data_inicio_gestao_ordenador = $n_dt2[0]." ".substr($n_dt2[1], 0, 8);
+
+                if($api2_array[$u]['data_fim_gestao_ordenador'] != null){
+                $n_dt3 = explode("T", $api2_array[$u]['data_fim_gestao_ordenador']);
+                $data_fim_gestao_ordenador = $n_dt3[0]." ".substr($n_dt3[1], 0, 8);
+                }else{$data_fim_gestao_ordenador = null;}
+
+
             $ord[$u] = new Ordenador;
             $ord[$u]->codigo_municipio = $api2_array[$u]['codigo_municipio'];
             $ord[$u]->exercicio_orcamento = $api2_array[$u]['exercicio_orcamento'];
@@ -93,15 +119,16 @@ class CidadeController extends Controller
             $ord[$u]->codigo_unidade = $api2_array[$u]['codigo_unidade'];
             $ord[$u]->data_referencia_ordenador = $api2_array[$u]['data_referencia_ordenador'];
             $ord[$u]->nome_ordenador = $api2_array[$u]['nome_ordenador'];
-            $ord[$u]->data_inclusao_unidade_orcamentaria = $api2_array[$u]['data_inclusao_unidade_orcamentaria'];
+            $ord[$u]->data_inclusao_unidade_orcamentaria = $data_inclusao_unidade_orcamentaria;
             $ord[$u]->cpf_servidor = $api2_array[$u]['cpf_servidor'];
             $ord[$u]->codigo_ingresso = $api2_array[$u]['codigo_ingresso'];
             $ord[$u]->codigo_vinculo = $api2_array[$u]['codigo_vinculo'];
             $ord[$u]->numero_expediente_nomeacao = $api2_array[$u]['numero_expediente_nomeacao'];
-            $ord[$u]->data_inicio_gestao_ordenador = $api2_array[$u]['data_inicio_gestao_ordenador'];
-            $ord[$u]->data_fim_gestao_ordenador = $api2_array[$u]['data_fim_gestao_ordenador'];
+            $ord[$u]->data_inicio_gestao_ordenador = $data_inicio_gestao_ordenador;
+            $ord[$u]->data_fim_gestao_ordenador = $data_fim_gestao_ordenador;
             $ord[$u]->tipo_cargo = $api2_array[$u]['tipo_cargo'];
             $ord[$u]->save();
+
             }
 
             for($u=0;$u<count($api3_array);$u++){
@@ -116,14 +143,22 @@ class CidadeController extends Controller
             }
             
             for($u=0;$u<count($api4_array);$u++){
+                $n_dt4 = explode("T", $api4_array[$u]['data_criacao']);
+                $data_criacao = $n_dt4[0]." ".substr($n_dt4[1], 0, 8);
+                if($api4_array[$u]['data_extincao'] != null){
+                $n_dt5 = explode("T", $api4_array[$u]['data_extincao']);
+                $data_extincao = $n_dt5[0]." ".substr($n_dt5[1], 0, 8);
+                }else{$data_extincao = null;}
+
+
             $ug[$u] = new UnidadeGestora;
             $ug[$u]->codigo_municipio = $api4_array[$u]['codigo_municipio'];
             $ug[$u]->exercicio_orcamento = $api4_array[$u]['exercicio_orcamento'];
             $ug[$u]->codigo_unidade_gestora = $api4_array[$u]['codigo_unidade_gestora'];
             $ug[$u]->data_referencia = $api4_array[$u]['data_referencia'];
             $ug[$u]->nome_unidade_gestora = $api4_array[$u]['nome_unidade_gestora'];
-            $ug[$u]->data_criacao = $api4_array[$u]['data_criacao'];
-            $ug[$u]->data_extincao = $api4_array[$u]['data_extincao'];
+            $ug[$u]->data_criacao = $data_criacao;
+            $ug[$u]->data_extincao = $data_extincao;
             $ug[$u]->numero_lei_criacao = $api4_array[$u]['numero_lei_criacao'];
             $ug[$u]->save();
             }
@@ -142,8 +177,19 @@ class CidadeController extends Controller
             
 
             $municipio_atual_id = Cidade::max("id");
-            $municipio_atual = Cidade::all()->where("id", "=", $municipio_atual_id);   
-            return view('cidades.create', ['flag' => 1, 'municipios' => $api_array, 'municipio_atual' => $municipio_atual]);
+            $municipio_atual = Cidade::all()->where("id", "=", $municipio_atual_id);
+            $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
+            $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
+            $orgao = Orgao::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
+            $ordenador = Ordenador::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
+            return view('cidades.create', ['flag' => 1, 
+                                            'municipios' => $api_array, 
+                                            'municipio_atual' => $municipio_atual,
+                                            'orgao' => $orgao,
+                                            'ordenador' => $ordenador,
+                                            'unidadeGestora' => $unidadeGestora,
+                                            'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                        ]);
         }
     }
 

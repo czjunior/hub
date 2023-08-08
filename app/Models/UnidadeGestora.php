@@ -13,16 +13,10 @@ class UnidadeGestora extends Model
         'codigo_municipio',
         'exercicio_orcamento',
         'codigo_unidade_gestora',
-        'codigo_orgao',
-        'codigo_unidade',
-        'cpf_servidor',
-        'nome_gestor',
-        'codigo_ingresso',
-        'codigo_vinculo',
-        'numero_expediente',
-        'tipo_cargo',
-        'data_inicio_gestao',
-        'data_fim_gestao',
-        'data_referencia'
+        'data_referencia',
+        'nome_unidade_gestora',
+        'data_criacao',
+        'data_extincao',
+        'numero_lei_criacao'
     ];
 }
