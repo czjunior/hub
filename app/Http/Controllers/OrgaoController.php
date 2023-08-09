@@ -43,27 +43,32 @@ class OrgaoController extends Controller
         //
     }
 
+    public function show2(String $id)
+    {
+        //
+        //dd($id);
+        $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
+        $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
+        $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);
+        $unidadeGestora = UnidadeGestora::all()->where('codigo_municipio', '=', $id);
+        $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where('codigo_municipio', '=', $id);
+        return view('orgaos.index', ['municipios' => $municipios,
+                                      'orgaos' => $orgao,
+                                      'ordenador' => $ordenador,
+                                      'unidadeGestora' => $unidadeGestora,
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                    ]);
+    }
+
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\Orgao  $orgao
      * @return \Illuminate\Http\Response
      */
-    public function show(String $id)
+    public function show(Orgao $orgao)
     {
         //
-        dd($id);
-        $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
-        $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
-        $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);
-        $unidadeGestora = UnidadeGestora::all()->where('codigo_municipio', '=', $id);
-        $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where('codigo_municipio', '=', $id);
-        return view('cidades.index', ['municipios' => $municipios,
-                                      'orgao' => $orgao,
-                                      'ordenador' => $ordenador,
-                                      'unidadeGestora' => $unidadeGestora,
-                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
-                                    ]);
     }
 
     /**

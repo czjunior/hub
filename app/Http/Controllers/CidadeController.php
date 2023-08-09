@@ -85,7 +85,7 @@ class CidadeController extends Controller
         //dd($conferencia);
         if($conferencia > 0){
             $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $mun[0]);
-            return redirect()->route('cidades.create', ['flag' => 0, 
+            return redirect()->route('cidade-create', ['flag' => 0, 
                                                         'municipios' => $api_array, 
                                                         'msg' => 'Importação realizada anteriormente'
                                                     ]);
@@ -178,11 +178,12 @@ class CidadeController extends Controller
 
             $municipio_atual_id = Cidade::max("id");
             $municipio_atual = Cidade::all()->where("id", "=", $municipio_atual_id);
-            $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
-            $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
-            $orgao = Orgao::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
-            $ordenador = Ordenador::all()->where("codigo_municipio", "=", $municipio_atual->codigo_municipio);
-            return view('cidades.create', ['flag' => 1, 
+            foreach($municipio_atual as $munic){ }
+            $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $orgao = Orgao::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $ordenador = Ordenador::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            return view('cidades.show', ['flag' => 1, 
                                             'municipios' => $api_array, 
                                             'municipio_atual' => $municipio_atual,
                                             'orgao' => $orgao,
@@ -199,9 +200,23 @@ class CidadeController extends Controller
      * @param  \App\Models\Cidade  $cidade
      * @return \Illuminate\Http\Response
      */
-    public function show(Cidade $cidade)
+    //public function show(Cidade $cidade)
+    public function show()
     {
         //
+        $id = "005";
+            $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $id);
+            foreach($municipio_atual as $munic){ }
+            $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $orgao = Orgao::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $ordenador = Ordenador::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            return view('cidades.show', ['municipio_atual' => $municipio_atual,
+                                            'orgao' => $orgao,
+                                            'ordenador' => $ordenador,
+                                            'unidadeGestora' => $unidadeGestora,
+                                            'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                        ]);
     }
 
     /**

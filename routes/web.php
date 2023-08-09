@@ -41,9 +41,10 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	
 	Route::get('cidade-create', [CidadeController::class, 'create'])->middleware('auth')->name('cidade-create');
 	Route::get('cidade-index', [CidadeController::class, 'index'])->middleware('auth')->name('cidade-index');
+	Route::get('cidade-show', [CidadeController::class, 'show'])->middleware('auth')->name('cidade-show');
 	Route::post('cidade-store', [CidadeController::class, 'store'])->middleware('auth')->name('cidade-store');
 
-	Route::get('orgao-show', [OrgaoController::class, 'show'])->middleware('auth')->name('orgao-show');
+	Route::get('orgao-show2/{id}', [OrgaoController::class, 'show2'])->middleware('auth')->name('orgao-show2');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
