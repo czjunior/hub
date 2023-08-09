@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\UnidadeGestora;
 use Illuminate\Http\Request;
+use App\Models\Cidade;
+use App\Models\Ordenador;
+use App\Models\Orgao;
+use App\Models\UnidadeOrcamentaria;
+use Illuminate\Support\Facades\Http;
+
 
 class UnidadeGestoraController extends Controller
 {
@@ -36,6 +42,23 @@ class UnidadeGestoraController extends Controller
     public function store(Request $request)
     {
         //
+    }
+
+    public function show2(Request $request)
+    {
+        //
+        $id = $request->codigo_municipio;
+        $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
+        $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
+        $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);
+        $unidadeGestora = UnidadeGestora::all()->where('codigo_municipio', '=', $id);
+        $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where('codigo_municipio', '=', $id);
+        return view('unidadeGestoras.index', ['municipios' => $municipios,
+                                      'orgaos' => $orgao,
+                                      'ordenador' => $ordenador,
+                                      'unidadeGestora' => $unidadeGestora,
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                    ]);
     }
 
     /**

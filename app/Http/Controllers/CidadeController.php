@@ -183,8 +183,7 @@ class CidadeController extends Controller
             $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
             $orgao = Orgao::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
             $ordenador = Ordenador::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
-            return view('cidades.show', ['flag' => 1, 
-                                            'municipios' => $api_array, 
+            return view('cidades.show', ['municipios' => $api_array, 
                                             'municipio_atual' => $municipio_atual,
                                             'orgao' => $orgao,
                                             'ordenador' => $ordenador,
@@ -201,10 +200,11 @@ class CidadeController extends Controller
      * @return \Illuminate\Http\Response
      */
     //public function show(Cidade $cidade)
-    public function show()
+    public function show(Request $request)
     {
         //
-        $id = "005";
+        $id = $request->codigo_municipio;
+        //dd($request->codigo_municipio);
             $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $id);
             foreach($municipio_atual as $munic){ }
             $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $munic->codigo_municipio);

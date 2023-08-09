@@ -43,10 +43,10 @@ class OrgaoController extends Controller
         //
     }
 
-    public function show2(String $id)
+    public function show2(Request $request)
     {
         //
-        //dd($id);
+        $id = $request->codigo_municipio;
         $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
         $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
         $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);

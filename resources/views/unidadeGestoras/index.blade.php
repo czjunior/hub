@@ -7,7 +7,7 @@
             <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header pb-0">
-                        <h6>Lista dos Órgãos do Município</h6>
+                        <h6>Lista das Unid. Gestoras do Município</h6>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
@@ -16,12 +16,12 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Nome</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Gestor(es)</th>
+                                        <!--th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Gestor(es)</th-->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($orgaos as $org)
+                                    @foreach($unidadeGestora as $ug)
                                     <tr>
                                         <td>
                                             <div class="d-flex px-2 py-1">
@@ -30,25 +30,10 @@
                                                         alt="user1">
                                                 </div-->
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">{{ $org['nome_orgao'] }}</h6>
-                                                    <p class="text-xs text-secondary mb-0">Cód. Órgão: {{ $org['codigo_orgao'] }}</p>
+                                                    <h6 class="mb-0 text-sm">{{ $ug['nome_unidade_gestora'] }}</h6>
+                                                    <p class="text-xs text-secondary mb-0">Cód. Unid. Gestora: {{ $ug['codigo_unidade_gestora'] }}</p>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td>
-                                            @foreach($ordenador as $ord)
-                                                @php
-                                                $n_dt_ini = date_format(date_create($ord['data_inicio_gestao_ordenador']), 'd/m/Y');
-                                                if($ord['data_fim_gestao_ordenador'] != null){
-                                                $n_dt_fin = date_format(date_create($ord['data_fim_gestao_ordenador']), 'd/m/Y');
-                                                }else{$n_dt_fin = "-";}
-                                                @endphp
-                                                @if($ord['codigo_orgao'] == $org['codigo_orgao'])
-                                                <p class="text-xs font-weight-bold mb-0">{{ $ord['nome_ordenador'] }}</p>
-                                                <p class="text-xs text-secondary mb-0">CPF: {{ $ord['cpf_servidor'] }} </p>
-                                                <p class="text-xs text-secondary mb-0">Inicio: {{ $n_dt_ini }} - Fim: {{ $n_dt_fin }}</p>
-                                                @endif
-                                            @endforeach
                                         </td>
                                     </tr>
                                     @endforeach

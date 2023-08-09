@@ -23,9 +23,11 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\OrgaoController;
+use App\Http\Controllers\UnidadeGestoraController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
-use App\Http\Controllers\ChangePassword;            
+use App\Http\Controllers\ChangePassword;
+use Illuminate\Support\Facades\Http;          
             
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
@@ -41,10 +43,11 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	
 	Route::get('cidade-create', [CidadeController::class, 'create'])->middleware('auth')->name('cidade-create');
 	Route::get('cidade-index', [CidadeController::class, 'index'])->middleware('auth')->name('cidade-index');
-	Route::get('cidade-show', [CidadeController::class, 'show'])->middleware('auth')->name('cidade-show');
+	Route::post('cidade-show', [CidadeController::class, 'show'])->middleware('auth')->name('cidade-show');
 	Route::post('cidade-store', [CidadeController::class, 'store'])->middleware('auth')->name('cidade-store');
 
-	Route::get('orgao-show2/{id}', [OrgaoController::class, 'show2'])->middleware('auth')->name('orgao-show2');
+	Route::post('orgao-show2', [OrgaoController::class, 'show2'])->middleware('auth')->name('orgao-show2');
+	Route::post('unidadeGestora-show2', [UnidadeGestoraController::class, 'show2'])->middleware('auth')->name('unidadeGestora-show2');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
