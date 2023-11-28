@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\UnidadeOrcamentaria;
 use Illuminate\Http\Request;
+use App\Models\UnidadeGestora;
+use App\Models\Cidade;
+use App\Models\Ordenador;
+use App\Models\Orgao;
+use App\Models\TpUnidAdm;
+use Illuminate\Support\Facades\Http;
 
 class UnidadeOrcamentariaController extends Controller
 {
@@ -37,7 +43,24 @@ class UnidadeOrcamentariaController extends Controller
     {
         //
     }
-
+    public function show2(Request $request)
+    {
+        //
+        $id = $request->codigo_municipio;
+        $municipios = Cidade::all()->where('codigo_municipio', '=', $id);
+        $orgao = Orgao::all()->where('codigo_municipio', '=', $id);
+        $tpunidadm = TpUnidAdm::all();
+        $ordenador = Ordenador::all()->where('codigo_municipio', '=', $id);
+        $unidadeGestora = UnidadeGestora::all()->where('codigo_municipio', '=', $id);
+        $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where('codigo_municipio', '=', $id);
+        return view('unidadeOrcamentarias.index', ['municipios' => $municipios,
+                                      'orgaos' => $orgao,
+                                      'ordenador' => $ordenador,
+                                      'unidadeGestora' => $unidadeGestora,
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria,
+                                      'tp_unid_adm' => $tpunidadm
+                                    ]);
+    }
     /**
      * Display the specified resource.
      *

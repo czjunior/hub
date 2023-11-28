@@ -1,13 +1,13 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-    @include('layouts.navbars.auth.topnav', ['title' => 'Unid. Gestoras'])
+    @include('layouts.navbars.auth.topnav', ['title' => 'Unid. Orçamentárias'])
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header pb-0">
-                        <h6>Lista das Unid. Gestoras do Município</h6>
+                        <h6>Lista das Unid. Orçamentárias do Município</h6>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
@@ -21,7 +21,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($unidadeGestora as $ug)
+                                    @foreach($unidadeOrcamentaria as $uo)
                                     <tr>
                                         <td>
                                             <div class="d-flex px-2 py-1">
@@ -30,8 +30,14 @@
                                                         alt="user1">
                                                 </div-->
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">{{ $ug['nome_unidade_gestora'] }}</h6>
-                                                    <p class="text-xs text-secondary mb-0">Cód. Unid. Gestora: {{ $ug['codigo_unidade_gestora'] }}</p>
+                                                    <h6 class="mb-0 text-sm">{{ $uo['nome_unidade'] }}</h6>
+                                                    <p class="text-xs text-secondary mb-0">Cód. & Tipo de Unid. Administrativa: {{ $uo['codigo_tipo_unidade'] }} 
+                                                    @foreach($tp_unid_adm as $tu)
+                                                        @if($tu['codigo'] == $uo['codigo_tipo_unidade'])
+                                                        {{ $tu['nome'] }}
+                                                        @endif
+                                                    @endforeach
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>

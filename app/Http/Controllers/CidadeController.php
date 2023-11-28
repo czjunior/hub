@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Cidade;
 use App\Models\Ordenador;
 use App\Models\Orgao;
+use App\Models\TpUnidAdm;
 use App\Models\UnidadeGestora;
 use App\Models\UnidadeOrcamentaria;
+use App\Models\GestoresUnidadesGestora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -22,6 +24,7 @@ class CidadeController extends Controller
         //
         $municipios = Cidade::all();
         $orgao = Orgao::all();
+        $tpunidadm = TpUnidAdm::all();
         $ordenador = Ordenador::all();
         $unidadeGestora = UnidadeGestora::all();
         $unidadeOrcamentaria = UnidadeOrcamentaria::all();
@@ -29,7 +32,8 @@ class CidadeController extends Controller
                                       'orgao' => $orgao,
                                       'ordenador' => $ordenador,
                                       'unidadeGestora' => $unidadeGestora,
-                                      'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                      'unidadeOrcamentaria' => $unidadeOrcamentaria,
+                                      'tp_unid_adm' => $tpunidadm
                                     ]);
     }
 
@@ -78,17 +82,139 @@ class CidadeController extends Controller
         $api5 = Http::get('https://api-dados-abertos.tce.ce.gov.br/unidades_orcamentarias?codigo_municipio='.$mun[0].'&exercicio_orcamento='.date('Y').'00&quantidade=50&deslocamento=1');
         $api5_array = $api5['data'];
         //dd($api5_array);
+        ////////////////////////GESTORES UNIDADES GESTORAS/////////////////////
+        $api6 = Http::get('https://api-dados-abertos.tce.ce.gov.br/gestores_unidades_gestoras?codigo_municipio='.$mun[0].'&exercicio_orcamento='.date('Y').'00');
+        $api6_array = $api6['data'];
+        //dd($api6_array);
         ///////////////////////////////////////////////////////////////////////
         
         //dd($mun);
         $conferencia = Cidade::where("codigo_municipio", "=", $mun[0])->count();
         //dd($conferencia);
         if($conferencia > 0){
+
+            for($u=0;$u<count($api2_array);$u++){
+                $n_dt1 = explode("T", $api2_array[$u]['data_inclusao_unidade_orcamentaria']);
+                $data_inclusao_unidade_orcamentaria = $n_dt1[0]." ".substr($n_dt1[1], 0, 8);
+
+                $n_dt2 = explode("T", $api2_array[$u]['data_inicio_gestao_ordenador']);
+                $data_inicio_gestao_ordenador = $n_dt2[0]." ".substr($n_dt2[1], 0, 8);
+
+                if($api2_array[$u]['data_fim_gestao_ordenador'] != null){
+                $n_dt3 = explode("T", $api2_array[$u]['data_fim_gestao_ordenador']);
+                $data_fim_gestao_ordenador = $n_dt3[0]." ".substr($n_dt3[1], 0, 8);
+                }else{$data_fim_gestao_ordenador = null;}
+
+
+            $ord[$u] = new Ordenador;
+            $ord[$u]->codigo_municipio = $api2_array[$u]['codigo_municipio'];
+            $ord[$u]->exercicio_orcamento = $api2_array[$u]['exercicio_orcamento'];
+            $ord[$u]->codigo_unidade_gestora = $api2_array[$u]['codigo_unidade_gestora'];
+            $ord[$u]->codigo_orgao = $api2_array[$u]['codigo_orgao'];
+            $ord[$u]->codigo_unidade = $api2_array[$u]['codigo_unidade'];
+            $ord[$u]->data_referencia_ordenador = $api2_array[$u]['data_referencia_ordenador'];
+            $ord[$u]->nome_ordenador = $api2_array[$u]['nome_ordenador'];
+            $ord[$u]->data_inclusao_unidade_orcamentaria = $data_inclusao_unidade_orcamentaria;
+            $ord[$u]->cpf_servidor = $api2_array[$u]['cpf_servidor'];
+            $ord[$u]->codigo_ingresso = $api2_array[$u]['codigo_ingresso'];
+            $ord[$u]->codigo_vinculo = $api2_array[$u]['codigo_vinculo'];
+            $ord[$u]->numero_expediente_nomeacao = $api2_array[$u]['numero_expediente_nomeacao'];
+            $ord[$u]->data_inicio_gestao_ordenador = $data_inicio_gestao_ordenador;
+            $ord[$u]->data_fim_gestao_ordenador = $data_fim_gestao_ordenador;
+            $ord[$u]->tipo_cargo = $api2_array[$u]['tipo_cargo'];
+            $ord[$u]->save();
+
+            }
+
+            for($u=0;$u<count($api6_array);$u++){
+                $n_dt2 = explode("T", $api6_array[$u]['data_inicio_gestao']);
+                $data_inicio_gestao = $n_dt2[0]." ".substr($n_dt2[1], 0, 8);
+
+                if($api6_array[$u]['data_fim_gestao'] != null){
+                $n_dt3 = explode("T", $api6_array[$u]['data_fim_gestao']);
+                $data_fim_gestao = $n_dt3[0]." ".substr($n_dt3[1], 0, 8);
+                }else{$data_fim_gestao = null;}
+
+
+            $gug[$u] = new GestoresUnidadesGestora;
+            $gug[$u]->cpf_servidor = $api6_array[$u]['cpf_servidor'];    
+            $gug[$u]->codigo_municipio = $api6_array[$u]['codigo_municipio'];
+            $gug[$u]->exercicio_orcamento = $api6_array[$u]['exercicio_orcamento'];
+            $gug[$u]->codigo_unidade_gestora = $api6_array[$u]['codigo_unidade_gestora'];
+            $gug[$u]->codigo_unidade = $api6_array[$u]['codigo_unidade'];
+            $gug[$u]->codigo_ingresso = $api6_array[$u]['codigo_ingresso'];
+            $gug[$u]->codigo_vinculo = $api6_array[$u]['codigo_vinculo'];
+            $gug[$u]->numero_expediente = $api6_array[$u]['numero_expediente'];
+            $gug[$u]->data_inicio_gestao = $data_inicio_gestao;
+            $gug[$u]->data_referencia = $api6_array[$u]['data_referencia'];
+            $gug[$u]->nome_gestor = $api6_array[$u]['nome_gestor'];
+            $gug[$u]->data_fim_gestao = $data_fim_gestao;
+            $gug[$u]->tipo_cargo = $api6_array[$u]['tipo_cargo'];
+            $gug[$u]->save();
+
+            }
+
+
+            for($u=0;$u<count($api3_array);$u++){
+            $org[$u] = new Orgao;
+            $org[$u]->codigo_municipio = $api3_array[$u]['codigo_municipio'];
+            $org[$u]->exercicio_orcamento = $api3_array[$u]['exercicio_orcamento'];
+            $org[$u]->codigo_orgao = $api3_array[$u]['codigo_orgao'];
+            $org[$u]->nome_orgao = $api3_array[$u]['nome_orgao'];
+            $org[$u]->codigo_tipo_unidade = $api3_array[$u]['codigo_tipo_unidade'];
+            $org[$u]->cgc_orgao = $api3_array[$u]['cgc_orgao'];
+            $org[$u]->save();
+            }
+            
+            for($u=0;$u<count($api4_array);$u++){
+                $n_dt4 = explode("T", $api4_array[$u]['data_criacao']);
+                $data_criacao = $n_dt4[0]." ".substr($n_dt4[1], 0, 8);
+                if($api4_array[$u]['data_extincao'] != null){
+                $n_dt5 = explode("T", $api4_array[$u]['data_extincao']);
+                $data_extincao = $n_dt5[0]." ".substr($n_dt5[1], 0, 8);
+                }else{$data_extincao = null;}
+
+
+            $ug[$u] = new UnidadeGestora;
+            $ug[$u]->codigo_municipio = $api4_array[$u]['codigo_municipio'];
+            $ug[$u]->exercicio_orcamento = $api4_array[$u]['exercicio_orcamento'];
+            $ug[$u]->codigo_unidade_gestora = $api4_array[$u]['codigo_unidade_gestora'];
+            $ug[$u]->data_referencia = $api4_array[$u]['data_referencia'];
+            $ug[$u]->nome_unidade_gestora = $api4_array[$u]['nome_unidade_gestora'];
+            $ug[$u]->data_criacao = $data_criacao;
+            $ug[$u]->data_extincao = $data_extincao;
+            $ug[$u]->numero_lei_criacao = $api4_array[$u]['numero_lei_criacao'];
+            $ug[$u]->save();
+            }
+
+            for($u=0;$u<count($api5_array);$u++){
+            $uo[$u] = new UnidadeOrcamentaria;
+            $uo[$u]->codigo_municipio = $api5_array[$u]['codigo_municipio'];
+            $uo[$u]->exercicio_orcamento = $api5_array[$u]['exercicio_orcamento'];
+            $uo[$u]->codigo_orgao = $api5_array[$u]['codigo_orgao'];
+            $uo[$u]->codigo_unidade = $api5_array[$u]['codigo_unidade'];
+            $uo[$u]->codigo_tipo_unidade = $api5_array[$u]['codigo_tipo_unidade'];
+            $uo[$u]->nome_unidade = $api5_array[$u]['nome_unidade'];
+            $uo[$u]->tipo_administracao_unidade = $api5_array[$u]['tipo_administracao_unidade'];
+            $uo[$u]->save();
+            }
+            
+
             $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $mun[0]);
-            return redirect()->route('cidade-create', ['flag' => 0, 
-                                                        'municipios' => $api_array, 
-                                                        'msg' => 'Importação realizada anteriormente'
-                                                    ]);
+            //$municipio_atual_id = $municipio_atual["id"];
+            //dd($municipio_atual);
+            foreach($municipio_atual as $munic){ }
+            $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $orgao = Orgao::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            $ordenador = Ordenador::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
+            return view('cidades.show', ['municipios' => $api_array, 
+                                            'municipio_atual' => $municipio_atual,
+                                            'orgao' => $orgao,
+                                            'ordenador' => $ordenador,
+                                            'unidadeGestora' => $unidadeGestora,
+                                            'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                        ]);
         }
         else{
             $municipio = new Cidade;
@@ -141,6 +267,36 @@ class CidadeController extends Controller
             $org[$u]->cgc_orgao = $api3_array[$u]['cgc_orgao'];
             $org[$u]->save();
             }
+
+            for($u=0;$u<count($api6_array);$u++){
+                $n_dt2 = explode("T", $api6_array[$u]['data_inicio_gestao']);
+                $data_inicio_gestao = $n_dt2[0]." ".substr($n_dt2[1], 0, 8);
+
+                if($api6_array[$u]['data_fim_gestao'] != null){
+                $n_dt3 = explode("T", $api6_array[$u]['data_fim_gestao']);
+                $data_fim_gestao = $n_dt3[0]." ".substr($n_dt3[1], 0, 8);
+                }else{$data_fim_gestao = null;}
+
+
+            $gug[$u] = new GestoresUnidadesGestora;
+            $gug[$u]->cpf_servidor = $api6_array[$u]['cpf_servidor'];    
+            $gug[$u]->codigo_municipio = $api6_array[$u]['codigo_municipio'];
+            $gug[$u]->exercicio_orcamento = $api6_array[$u]['exercicio_orcamento'];
+            $gug[$u]->codigo_unidade_gestora = $api6_array[$u]['codigo_unidade_gestora'];
+            $gug[$u]->codigo_unidade = $api6_array[$u]['codigo_unidade'];
+            $gug[$u]->codigo_ingresso = $api6_array[$u]['codigo_ingresso'];
+            $gug[$u]->codigo_vinculo = $api6_array[$u]['codigo_vinculo'];
+            $gug[$u]->numero_expediente = $api6_array[$u]['numero_expediente'];
+            $gug[$u]->data_inicio_gestao = $data_inicio_gestao;
+            $gug[$u]->data_referencia = $api6_array[$u]['data_referencia'];
+            $gug[$u]->nome_gestor = $api6_array[$u]['nome_gestor'];
+            $gug[$u]->data_fim_gestao = $data_fim_gestao;
+            $gug[$u]->tipo_cargo = $api6_array[$u]['tipo_cargo'];
+            $gug[$u]->save();
+
+            }
+
+
             
             for($u=0;$u<count($api4_array);$u++){
                 $n_dt4 = explode("T", $api4_array[$u]['data_criacao']);
@@ -206,6 +362,7 @@ class CidadeController extends Controller
         $id = $request->codigo_municipio;
         //dd($request->codigo_municipio);
             $municipio_atual = Cidade::all()->where("codigo_municipio", "=", $id);
+            $tpunidadm = TpUnidAdm::all();
             foreach($municipio_atual as $munic){ }
             $unidadeGestora = UnidadeGestora::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
             $unidadeOrcamentaria = UnidadeOrcamentaria::all()->where("codigo_municipio", "=", $munic->codigo_municipio);
@@ -215,7 +372,8 @@ class CidadeController extends Controller
                                             'orgao' => $orgao,
                                             'ordenador' => $ordenador,
                                             'unidadeGestora' => $unidadeGestora,
-                                            'unidadeOrcamentaria' => $unidadeOrcamentaria
+                                            'unidadeOrcamentaria' => $unidadeOrcamentaria,
+                                            'tp_unid_adm' => $tpunidadm
                                         ]);
     }
 

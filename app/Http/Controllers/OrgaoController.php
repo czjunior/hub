@@ -43,6 +43,7 @@ class OrgaoController extends Controller
         //
     }
 
+    //public function show2(Request $request)
     public function show2(Request $request)
     {
         //

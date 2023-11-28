@@ -22,8 +22,11 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CidadeController;
+use App\Http\Controllers\DocumentoLiquidacaoController;
+use App\Http\Controllers\ExecFFinanceiraController;
 use App\Http\Controllers\OrgaoController;
 use App\Http\Controllers\UnidadeGestoraController;
+use App\Http\Controllers\UnidadeOrcamentariaController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
@@ -46,8 +49,14 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	Route::post('cidade-show', [CidadeController::class, 'show'])->middleware('auth')->name('cidade-show');
 	Route::post('cidade-store', [CidadeController::class, 'store'])->middleware('auth')->name('cidade-store');
 
+	Route::get('documento_liquidacao-create', [DocumentoLiquidacaoController::class, 'create'])->middleware('auth')->name('documento_liquidacao-create');
+	Route::post('documento_liquidacao-store', [DocumentoLiquidacaoController::class, 'store'])->middleware('auth')->name('documento_liquidacao-store');
+	Route::get('exec_f_financeira-create', [ExecFFinanceiraController::class, 'create'])->middleware('auth')->name('exec_f_financeira-create');
+	Route::post('exec_f_financeira-store', [ExecFFinanceiraController::class, 'store'])->middleware('auth')->name('exec_f_financeira-store');
+
 	Route::post('orgao-show2', [OrgaoController::class, 'show2'])->middleware('auth')->name('orgao-show2');
 	Route::post('unidadeGestora-show2', [UnidadeGestoraController::class, 'show2'])->middleware('auth')->name('unidadeGestora-show2');
+	Route::post('unidadeOrcamentaria-show2', [UnidadeOrcamentariaController::class, 'show2'])->middleware('auth')->name('unidadeOrcamentaria-show2');
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
